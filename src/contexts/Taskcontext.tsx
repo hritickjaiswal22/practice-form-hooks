@@ -21,28 +21,7 @@ interface TaskProviderProps {
 }
 
 export function TaskProvider({ children }: TaskProviderProps) {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 1,
-      title: "Design System Update",
-      description: "Review the new brand colors and typography scale.",
-      completed: true,
-    },
-    {
-      id: 2,
-      title: "API Integration",
-      description:
-        "Connect the task dashboard to the backend GraphQL endpoint.",
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "User Interview",
-      description:
-        "Sync with the UX team to discuss feedback from the beta group.",
-      completed: false,
-    },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [taskId, setTaskId] = useState<number>(0);
 
   const addTask = (task: Omit<Task, "id" | "completed">) => {
