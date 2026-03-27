@@ -1,13 +1,34 @@
-import { useParams } from "react-router";
+import { useNavigate, NavLink, useParams } from "react-router";
+
+import TaskForm from "../features/tasks/TaskForm";
+import { useTask } from "../contexts/Taskcontext";
 
 function EditTaskPage() {
   let { id } = useParams();
+  const { editTask, tasks } = useTask();
+  const navigate = useNavigate();
+
+  const taskToEdit = tasks.find((task) => task.id === Number(id));
 
   return (
     <div>
-      <h1>Edit Task Page</h1>
-      <p>Editing task with ID: {id}</p>
-      <p>Form to edit the task will go here.</p>
+      <div
+        style={{
+          maxWidth: "480px",
+          margin: "2rem auto",
+        }}
+      >
+        <NavLink to="/">Back to Task List</NavLink>
+      </div>
+      <TaskForm
+        headerText="Edit task"
+        onSubmit={(task) => {
+          editTask(Number(id), task);
+          navigate("/");
+        }}
+        ctaText="Edit"
+        initialValues={taskToEdit}
+      />
     </div>
   );
 }

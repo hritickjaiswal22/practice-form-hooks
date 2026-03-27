@@ -1,10 +1,7 @@
+import TaskList from "../features/tasks/TaskList";
+
 function TaskListPage() {
-  return (
-    <div>
-      <h1>Task List Page</h1>
-      <p>All tasks will be listed here.</p>
-    </div>
-  );
+  return <TaskList />;
 }
 
 export default TaskListPage;
