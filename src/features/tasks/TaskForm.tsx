@@ -1,10 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 import Input from "../../components/Input/Input";
 import Textarea from "../../components/Textarea/Textarea";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import styles from "./TaskForm.module.css";
 import type { Task } from "../../contexts/Taskcontext";
+
+// 1. Define the Validation Schema
+const schema = yup
+  .object({
+    title: yup
+      .string()
+      .required("A title is required")
+      .trim()
+      .min(3, "Too short!"),
+    description: yup.string().trim().required("Please add some details"),
+    // .default(false) ensures it starts as false
+    // .required() ensures TypeScript doesn't see it as optional
+    completed: yup.boolean().required().default(false),
+  })
+  .required();
+
+// Extract the type from the schema
+type FormData = yup.InferType<typeof schema>;
 
 interface TaskFormProps {
   onSubmit: (task: Omit<Task, "id">) => void;
@@ -25,51 +46,50 @@ const TaskForm: React.FC<TaskFormProps> = ({
   headerText = "",
   clearFormAfterSubmit = false,
 }) => {
-  const [title, setTitle] = useState(initialValues.title || "");
-  const [description, setDescription] = useState(
-    initialValues.description || "",
-  );
-  const [completed, setCompleted] = useState(initialValues.completed || false);
+  // 2. Initialize useForm
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(schema),
+    defaultValues: initialValues,
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({ title, description, completed });
-
+  const handleFormSubmit = (data: FormData) => {
+    onSubmit(data);
     if (clearFormAfterSubmit) {
-      setTitle("");
-      setDescription("");
-      setCompleted(false);
+      reset(); // Resets to defaultValues
     }
   };
 
   return (
     <div className={styles.formCard}>
-      {headerText ? (
+      {headerText && (
         <header className={styles.header}>
           <h2>{headerText}</h2>
         </header>
-      ) : null}
+      )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+        {/* 3. Use register and pass error messages */}
         <Input
           label="What are you planning?"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Finish the UI Design"
-          required
+          {...register("title")}
+          error={errors.title?.message}
         />
+
         <Textarea
           label="Details"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
           placeholder="Briefly describe the objective..."
-          required
+          {...register("description")}
+          error={errors.description?.message}
         />
-        <Checkbox
-          label="Is completed ?"
-          checked={completed}
-          onChange={(e) => setCompleted(e.target.checked)}
-        />
+
+        <Checkbox label="Is completed?" {...register("completed")} />
+
         <button type="submit" className={styles.submitBtn}>
           {ctaText}
         </button>
