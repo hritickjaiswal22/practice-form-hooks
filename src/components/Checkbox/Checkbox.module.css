@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #6366f1;
+  border-radius: 6px; /* Note: browsers vary on rounding native checkboxes */
+}
+
+/* Optional: Subtle hover effect for the whole row */
+.wrapper:hover .label {
+  color: #6366f1;
+}
